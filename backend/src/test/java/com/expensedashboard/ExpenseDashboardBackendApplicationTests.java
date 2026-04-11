@@ -1,10 +1,10 @@
-package com.expense.backend;
+package com.expensedashboard;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BackendApplicationTests {
+class ExpenseDashboardBackendApplicationTests {
 
 	@Test
 	void contextLoads() {

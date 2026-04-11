@@ -1,13 +1,13 @@
-package com.expense.backend;
+package com.expensedashboard;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BackendApplication {
+public class ExpenseDashboardBackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BackendApplication.class, args);
+		SpringApplication.run(ExpenseDashboardBackendApplication.class, args);
 	}
 
 }
