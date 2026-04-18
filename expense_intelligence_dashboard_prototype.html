@@ -1,0 +1,569 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0f1117;--surface:#181c27;--surface2:#1e2333;--surface3:#252a3d;
+    --border:#2d3450;--border2:#3a4060;
+    --teal:#00d4aa;--teal-dim:#00d4aa22;--teal-mid:#00d4aa55;
+    --amber:#f5a623;--amber-dim:#f5a62320;
+    --red:#ff4d6a;--red-dim:#ff4d6a20;
+    --blue:#4a9eff;--blue-dim:#4a9eff18;
+    --text:#e8ecf4;--muted:#7a8299;--faint:#3d4460;
+    --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+    --r:10px;--r2:14px;
+  }
+  body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:600px;overflow-x:hidden}
+  .app{display:flex;height:100%;min-height:580px}
+  .sidebar{width:220px;min-width:220px;background:var(--surface);border-right:1px solid var(--border);padding:20px 0;display:flex;flex-direction:column}
+  .logo{padding:0 20px 24px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);margin-bottom:12px}
+  .logo-icon{width:32px;height:32px;background:var(--teal);border-radius:8px;display:flex;align-items:center;justify-content:center}
+  .logo-icon svg{width:18px;height:18px;fill:var(--bg)}
+  .logo-text{font-size:13px;font-weight:600;letter-spacing:.3px;color:var(--text)}
+  .logo-sub{font-size:10px;color:var(--muted)}
+  .nav-section{padding:0 12px;margin-bottom:4px}
+  .nav-label{font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:1.2px;padding:0 8px;margin-bottom:6px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--r);cursor:pointer;font-size:13px;color:var(--muted);transition:all .15s;margin-bottom:2px}
+  .nav-item:hover{background:var(--surface2);color:var(--text)}
+  .nav-item.active{background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-mid)}
+  .nav-item svg{width:15px;height:15px;flex-shrink:0}
+  .nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:9px;font-weight:600;padding:2px 6px;border-radius:10px;font-family:var(--mono)}
+  .sidebar-bottom{margin-top:auto;padding:12px;border-top:1px solid var(--border)}
+  .user-card{display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface2);border-radius:var(--r);border:1px solid var(--border)}
+  .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4a9eff,#00d4aa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff}
+  .user-name{font-size:12px;font-weight:500}
+  .user-email{font-size:10px;color:var(--muted)}
+  .main{flex:1;overflow-y:auto;overflow-x:hidden}
+  .page{display:none;padding:28px;animation:fadeIn .2s}
+  .page.active{display:block}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .page-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
+  .page-title{font-size:22px;font-weight:600;letter-spacing:-.3px}
+  .page-sub{font-size:13px;color:var(--muted);margin-top:3px}
+  .btn{padding:9px 18px;border-radius:var(--r);font-size:12px;font-weight:500;cursor:pointer;border:none;font-family:var(--font);transition:all .15s}
+  .btn-primary{background:var(--teal);color:var(--bg)}
+  .btn-primary:hover{opacity:.85}
+  .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border2)}
+  .btn-ghost:hover{color:var(--text);border-color:var(--border2)}
+  .btn-sm{padding:6px 12px;font-size:11px}
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:18px 20px;position:relative;overflow:hidden}
+  .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+  .stat-card.green::before{background:var(--teal)}
+  .stat-card.amber::before{background:var(--amber)}
+  .stat-card.red::before{background:var(--red)}
+  .stat-card.blue::before{background:var(--blue)}
+  .stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+  .stat-val{font-size:26px;font-weight:600;font-family:var(--mono);letter-spacing:-1px}
+  .stat-change{font-size:11px;margin-top:6px;display:flex;align-items:center;gap:4px}
+  .stat-change.up{color:var(--teal)}
+  .stat-change.down{color:var(--red)}
+  .charts-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
+  .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:20px}
+  .chart-card.full{grid-column:1/-1}
+  .chart-title{font-size:13px;font-weight:500;margin-bottom:4px}
+  .chart-sub{font-size:11px;color:var(--muted);margin-bottom:18px}
+  .chart-legend{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+  .legend-dot{width:8px;height:8px;border-radius:2px}
+  canvas{display:block}
+  .table-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+  .table-toolbar{padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+  .search-box{flex:1;display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px}
+  .search-box svg{width:13px;height:13px;color:var(--muted);flex-shrink:0}
+  .search-box input{background:none;border:none;outline:none;font-size:12px;color:var(--text);font-family:var(--font);width:100%}
+  .search-box input::placeholder{color:var(--faint)}
+  .filter-select{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;color:var(--muted);font-family:var(--font);cursor:pointer;outline:none}
+  table{width:100%;border-collapse:collapse}
+  thead th{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;padding:10px 20px;text-align:left;background:var(--surface2);border-bottom:1px solid var(--border)}
+  tbody tr{border-bottom:1px solid var(--border);transition:background .1s;cursor:default}
+  tbody tr:hover{background:var(--surface2)}
+  tbody tr:last-child{border-bottom:none}
+  td{padding:13px 20px;font-size:12px;color:var(--text)}
+  .cat-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:500;font-family:var(--mono)}
+  .cat-food{background:#00d4aa18;color:var(--teal)}
+  .cat-transport{background:#4a9eff18;color:var(--blue)}
+  .cat-utilities{background:#f5a62320;color:var(--amber)}
+  .cat-entertainment{background:#b47aff20;color:#b47aff}
+  .cat-health{background:#ff4d6a20;color:var(--red)}
+  .cat-other{background:#7a829920;color:var(--muted)}
+  .anomaly-badge{display:inline-flex;align-items:center;gap:4px;background:var(--red-dim);color:var(--red);border:1px solid #ff4d6a40;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:600}
+  .amount-cell{font-family:var(--mono);font-size:12px;font-weight:500}
+  .amount-pos{color:var(--red)}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+  .form-group{display:flex;flex-direction:column;gap:6px}
+  .form-group.full{grid-column:1/-1}
+  label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}
+  input,select,textarea{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--text);font-family:var(--font);outline:none;transition:border .15s}
+  input:focus,select:focus,textarea:focus{border-color:var(--teal)}
+  select option{background:var(--surface)}
+  textarea{resize:vertical;min-height:80px}
+  .form-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:28px;max-width:600px}
+  .anomaly-list{display:flex;flex-direction:column;gap:12px}
+  .anomaly-item{background:var(--surface);border:1px solid #ff4d6a30;border-radius:var(--r2);padding:18px 20px;display:flex;align-items:center;gap:16px}
+  .anomaly-icon{width:38px;height:38px;border-radius:10px;background:var(--red-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .anomaly-icon svg{width:18px;height:18px;color:var(--red)}
+  .anomaly-info{flex:1}
+  .anomaly-desc{font-size:13px;font-weight:500}
+  .anomaly-meta{font-size:11px;color:var(--muted);margin-top:3px}
+  .anomaly-amount{font-family:var(--mono);font-size:16px;font-weight:600;color:var(--red)}
+  .tag{display:inline-block;background:var(--red-dim);color:var(--red);border:1px solid #ff4d6a30;padding:2px 8px;border-radius:6px;font-size:10px;font-family:var(--mono);margin-left:8px}
+  .ml-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:20px;margin-bottom:18px}
+  .ml-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+  .ml-badge{background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-mid);padding:3px 10px;border-radius:20px;font-size:10px;font-family:var(--mono)}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--teal-mid);color:var(--teal);padding:12px 18px;border-radius:var(--r);font-size:12px;box-shadow:0 4px 20px #00000060;z-index:999;animation:slideUp .3s;display:none}
+  @keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+  .empty-state svg{width:40px;height:40px;margin:0 auto 16px;opacity:.3;display:block}
+  .prog-bar{height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-top:10px}
+  .prog-fill{height:100%;border-radius:2px;transition:width 1s ease}
+  .insight-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+  .insight-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px}
+  .insight-icon{font-size:20px;margin-bottom:10px}
+  .insight-title{font-size:12px;font-weight:500;margin-bottom:4px}
+  .insight-body{font-size:11px;color:var(--muted);line-height:1.5}
+  .refresh-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-mid);border-radius:var(--r);font-size:11px;font-family:var(--font);cursor:pointer;transition:all .15s}
+  .refresh-btn:hover{background:var(--teal-mid)}
+  @media(max-width:700px){
+    .sidebar{display:none}
+    .stats-grid{grid-template-columns:1fr 1fr}
+    .charts-row{grid-template-columns:1fr}
+    .insight-row{grid-template-columns:1fr}
+    .form-grid{grid-template-columns:1fr}
+  }
+</style>
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Expense Intelligence Dashboard prototype — shows spending analytics, predictions, and anomaly detection across multiple views.</h2>
+<div class="app">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div>
+        <div class="logo-text">Expense IQ</div>
+        <div class="logo-sub">Intelligence Dashboard</div>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Overview</div>
+      <div class="nav-item active" onclick="navigate('dashboard',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item" onclick="navigate('expenses',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        All Expenses
+      </div>
+      <div class="nav-item" onclick="navigate('anomalies',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Anomalies
+        <span class="nav-badge">3</span>
+      </div>
+    </div>
+    <div class="nav-section" style="margin-top:12px">
+      <div class="nav-label">Actions</div>
+      <div class="nav-item" onclick="navigate('add',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Add Expense
+      </div>
+      <div class="nav-item" onclick="navigate('predictions',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        ML Predictions
+      </div>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="user-card">
+        <div class="avatar">RD</div>
+        <div>
+          <div class="user-name">Ritobrata D.</div>
+          <div class="user-email">ritobrata@dev.io</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <!-- DASHBOARD -->
+    <div id="page-dashboard" class="page active">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Dashboard</div>
+          <div class="page-sub">April 2025 · Last updated 2 minutes ago</div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="navigate('add',document.querySelector('[onclick*=add]'))">+ Add Expense</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card green">
+          <div class="stat-label">Total Spent (Apr)</div>
+          <div class="stat-val">₹18,240</div>
+          <div class="stat-change down">▲ 12% vs March</div>
+          <div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--teal)"></div></div>
+        </div>
+        <div class="stat-card amber">
+          <div class="stat-label">Budget Used</div>
+          <div class="stat-val">72%</div>
+          <div class="stat-change up" style="color:var(--amber)">₹7,060 remaining</div>
+          <div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--amber)"></div></div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-label">Anomalies Flagged</div>
+          <div class="stat-val">3</div>
+          <div class="stat-change" style="color:var(--red)">Needs review</div>
+          <div class="prog-bar"><div class="prog-fill" style="width:30%;background:var(--red)"></div></div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-label">Top Category</div>
+          <div class="stat-val" style="font-size:20px">Food</div>
+          <div class="stat-change" style="color:var(--blue)">₹6,800 this month</div>
+          <div class="prog-bar"><div class="prog-fill" style="width:55%;background:var(--blue)"></div></div>
+        </div>
+      </div>
+      <div class="insight-row">
+        <div class="insight-card">
+          <div class="insight-icon">📊</div>
+          <div class="insight-title">Spending Velocity</div>
+          <div class="insight-body">You're spending 18% faster than last month. At this rate, you'll exceed your budget by April 28.</div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">🤖</div>
+          <div class="insight-title">ML Prediction</div>
+          <div class="insight-body">Model predicts ₹21,400 for May across all categories. Food and Transport are trending up.</div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">⚡</div>
+          <div class="insight-title">Anomaly Alert</div>
+          <div class="insight-body">A ₹4,200 entertainment charge on Apr 8 is 3.1× your usual spend — flagged by Isolation Forest.</div>
+        </div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title">Monthly Spending by Category</div>
+          <div class="chart-sub">Last 6 months — actual totals</div>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="legend-dot" style="background:#00d4aa"></span>Food</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#4a9eff"></span>Transport</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#f5a623"></span>Utilities</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#b47aff"></span>Entertainment</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#ff4d6a"></span>Health</span>
+          </div>
+          <div style="position:relative;height:220px"><canvas id="barChart" role="img" aria-label="Stacked bar chart of monthly expenses by category from November to April">Monthly spending: Nov 14k, Dec 17k, Jan 15k, Feb 13k, Mar 16k, Apr 18k</canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Category Breakdown — April</div>
+          <div class="chart-sub">Share of total spend this month</div>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="legend-dot" style="background:#00d4aa"></span>Food 37%</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#4a9eff"></span>Transport 22%</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#f5a623"></span>Utilities 18%</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#b47aff"></span>Entmt 15%</span>
+            <span class="legend-item"><span class="legend-dot" style="background:#ff4d6a"></span>Health 8%</span>
+          </div>
+          <div style="position:relative;height:220px"><canvas id="donutChart" role="img" aria-label="Donut chart showing April spending breakdown by category">Food 37%, Transport 22%, Utilities 18%, Entertainment 15%, Health 8%</canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPENSES -->
+    <div id="page-expenses" class="page">
+      <div class="page-header">
+        <div>
+          <div class="page-title">All Expenses</div>
+          <div class="page-sub">Showing 12 transactions — April 2025</div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-ghost btn-sm">Export CSV</button>
+          <button class="btn btn-primary btn-sm" onclick="navigate('add',document.querySelector('[onclick*=add]'))">+ New</button>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-toolbar">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input placeholder="Search expenses..." id="searchInput" oninput="filterTable()">
+          </div>
+          <select class="filter-select" id="catFilter" onchange="filterTable()">
+            <option value="">All Categories</option>
+            <option>Food</option><option>Transport</option><option>Utilities</option><option>Entertainment</option><option>Health</option><option>Other</option>
+          </select>
+        </div>
+        <div style="overflow-x:auto">
+          <table id="expTable">
+            <thead>
+              <tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Status</th></tr>
+            </thead>
+            <tbody id="expBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANOMALIES -->
+    <div id="page-anomalies" class="page">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Anomaly Detection</div>
+          <div class="page-sub">Isolation Forest model · 3 flags this month</div>
+        </div>
+        <span class="ml-badge">sklearn · IF model</span>
+      </div>
+      <div class="ml-panel">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:10px;height:10px;border-radius:50%;background:var(--teal);box-shadow:0 0 8px var(--teal)"></div>
+          <div style="font-size:12px;color:var(--muted)">Isolation Forest running · contamination=0.05 · features: amount, day_of_week, day_of_month</div>
+        </div>
+      </div>
+      <div class="anomaly-list" id="anomalyList"></div>
+    </div>
+
+    <!-- ADD EXPENSE -->
+    <div id="page-add" class="page">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Add Expense</div>
+          <div class="page-sub">New transaction will be scanned for anomalies automatically</div>
+        </div>
+      </div>
+      <div class="form-card">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Category</label>
+            <select id="newCat">
+              <option>Food</option><option>Transport</option><option>Utilities</option><option>Entertainment</option><option>Health</option><option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Amount (₹)</label>
+            <input type="number" id="newAmount" placeholder="0.00" min="0">
+          </div>
+          <div class="form-group">
+            <label>Expense Date</label>
+            <input type="date" id="newDate">
+          </div>
+          <div class="form-group">
+            <label>Payment Method</label>
+            <select><option>UPI</option><option>Card</option><option>Cash</option><option>Net Banking</option></select>
+          </div>
+          <div class="form-group full">
+            <label>Description</label>
+            <input type="text" id="newDesc" placeholder="e.g. Weekly groceries at Big Bazaar">
+          </div>
+          <div class="form-group full">
+            <label>Notes (optional)</label>
+            <textarea placeholder="Any additional context..."></textarea>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center">
+          <button class="btn btn-primary" onclick="submitExpense()">Save Expense</button>
+          <button class="btn btn-ghost" onclick="navigate('expenses',document.querySelector('[onclick*=expenses]'))">Cancel</button>
+          <div style="margin-left:auto;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px">
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--teal)"></div>
+            Anomaly scan will run on save
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREDICTIONS -->
+    <div id="page-predictions" class="page">
+      <div class="page-header">
+        <div>
+          <div class="page-title">ML Predictions</div>
+          <div class="page-sub">Linear Regression · Per category · Next month forecast</div>
+        </div>
+        <button class="refresh-btn" onclick="refreshPredictions()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Refresh Model
+        </button>
+      </div>
+      <div class="ml-panel">
+        <div class="ml-header">
+          <div>
+            <div style="font-size:13px;font-weight:500">Model Status</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:3px">Last trained: April 5, 2025 · R² = 0.87</div>
+          </div>
+          <span class="ml-badge">Linear Regression v1</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <div style="background:var(--surface2);border-radius:8px;padding:12px">
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px">Training Data</div>
+            <div style="font-size:18px;font-family:var(--mono);font-weight:500;margin-top:6px">6 months</div>
+          </div>
+          <div style="background:var(--surface2);border-radius:8px;padding:12px">
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px">Accuracy (R²)</div>
+            <div style="font-size:18px;font-family:var(--mono);font-weight:500;margin-top:6px;color:var(--teal)">0.87</div>
+          </div>
+          <div style="background:var(--surface2);border-radius:8px;padding:12px">
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px">Models Trained</div>
+            <div style="font-size:18px;font-family:var(--mono);font-weight:500;margin-top:6px">5 models</div>
+          </div>
+        </div>
+      </div>
+      <div class="chart-card" style="margin-bottom:18px">
+        <div class="chart-title">Predicted vs Actual — Last 6 Months</div>
+        <div class="chart-sub">Dashed line = model prediction, solid line = actual spend</div>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:#00d4aa"></span>Actual</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#4a9eff;border:1px dashed #4a9eff"></span>Predicted</span>
+        </div>
+        <div style="position:relative;height:240px"><canvas id="predChart" role="img" aria-label="Line chart comparing predicted vs actual monthly spending from November to April">Actual: Nov 14k, Dec 17k, Jan 15k, Feb 13k, Mar 16k, Apr 18k. Predicted: Nov 13k, Dec 16k, Jan 14.5k, Feb 13.5k, Mar 15k, Apr 17k</canvas></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
+        <div id="pred-cards"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px" id="pred-cards-row"></div>
+    </div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const expenses = [
+  {id:1,date:'2025-04-01',desc:'Morning coffee & breakfast',cat:'Food',amount:320,anomaly:false},
+  {id:2,date:'2025-04-02',desc:'Metro monthly pass',cat:'Transport',amount:1800,anomaly:false},
+  {id:3,date:'2025-04-03',desc:'Electricity bill',cat:'Utilities',amount:2100,anomaly:false},
+  {id:4,date:'2025-04-04',desc:'Weekly groceries Big Bazaar',cat:'Food',amount:2800,anomaly:false},
+  {id:5,date:'2025-04-05',desc:'Uber rides (weekly)',cat:'Transport',amount:980,anomaly:false},
+  {id:6,date:'2025-04-06',desc:'Swiggy dinner party',cat:'Food',amount:3200,anomaly:false},
+  {id:7,date:'2025-04-08',desc:'Concert tickets + dinner',cat:'Entertainment',amount:4200,anomaly:true},
+  {id:8,date:'2025-04-09',desc:'Pharmacy — vitamins',cat:'Health',amount:760,anomaly:false},
+  {id:9,date:'2025-04-10',desc:'Internet bill',cat:'Utilities',amount:1200,anomaly:false},
+  {id:10,date:'2025-04-11',desc:'Gym membership',cat:'Health',amount:700,anomaly:false},
+  {id:11,date:'2025-04-12',desc:'Grab groceries',cat:'Food',amount:540,anomaly:false},
+  {id:12,date:'2025-04-08',desc:'ATM withdrawal (unusual amt)',cat:'Other',amount:8500,anomaly:true},
+  {id:13,date:'2025-04-05',desc:'International data roaming',cat:'Utilities',amount:3900,anomaly:true},
+];
+
+const anomalies = expenses.filter(e=>e.anomaly);
+
+function catClass(c){return'cat-'+c.toLowerCase().replace(/\s/,'')||'cat-other'}
+function navigate(page,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  if(el) el.classList.add('active');
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  setTimeout(()=>t.style.display='none',3000);
+}
+
+function renderExpenses(){
+  const search=document.getElementById('searchInput')?.value.toLowerCase()||'';
+  const catF=document.getElementById('catFilter')?.value||'';
+  const filtered=expenses.filter(e=>{
+    const matchS=e.desc.toLowerCase().includes(search)||e.cat.toLowerCase().includes(search);
+    const matchC=!catF||e.cat===catF;
+    return matchS&&matchC;
+  });
+  const tbody=document.getElementById('expBody');
+  if(!tbody)return;
+  tbody.innerHTML=filtered.map(e=>`
+    <tr>
+      <td style="color:var(--muted);font-family:var(--mono);font-size:11px">${e.date}</td>
+      <td>${e.desc}${e.anomaly?'<span class="tag">anomaly</span>':''}</td>
+      <td><span class="cat-pill ${catClass(e.cat)}">${e.cat}</span></td>
+      <td class="amount-cell amount-pos">₹${e.amount.toLocaleString()}</td>
+      <td>${e.anomaly?'<span class="anomaly-badge"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg> Flagged</span>':'<span style="color:var(--muted);font-size:11px">Normal</span>'}</td>
+    </tr>
+  `).join('');
+}
+function filterTable(){renderExpenses();}
+renderExpenses();
+
+function renderAnomalies(){
+  const el=document.getElementById('anomalyList');
+  el.innerHTML=anomalies.map(a=>`
+    <div class="anomaly-item">
+      <div class="anomaly-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="anomaly-info">
+        <div class="anomaly-desc">${a.desc}</div>
+        <div class="anomaly-meta">${a.date} · <span class="cat-pill ${catClass(a.cat)}" style="font-size:9px;padding:1px 7px">${a.cat}</span> · Score: -0.${Math.floor(Math.random()*30+55)} (IF score)</div>
+      </div>
+      <div class="anomaly-amount">₹${a.amount.toLocaleString()}</div>
+    </div>
+  `).join('');
+}
+renderAnomalies();
+
+function submitExpense(){
+  const cat=document.getElementById('newCat').value;
+  const amt=parseFloat(document.getElementById('newAmount').value);
+  const desc=document.getElementById('newDesc').value||'New expense';
+  const date=document.getElementById('newDate').value||'2025-04-12';
+  if(!amt||amt<=0){showToast('⚠ Please enter a valid amount');return;}
+  const isAnom=amt>5000;
+  expenses.push({id:expenses.length+1,date,desc,cat,amount:amt,anomaly:isAnom});
+  renderExpenses();
+  showToast(isAnom?'⚠ Expense saved — anomaly detected by Flask ML!':'✓ Expense saved · anomaly scan: clear');
+  navigate('expenses',null);
+  document.getElementById('newAmount').value='';
+  document.getElementById('newDesc').value='';
+}
+
+function refreshPredictions(){
+  showToast('🤖 Calling Flask /predict · Linear Regression refreshing...');
+}
+
+const predData=[
+  {cat:'Food',actual:6800,pred:7200,color:'#00d4aa'},
+  {cat:'Transport',actual:4040,pred:3800,color:'#4a9eff'},
+  {cat:'Utilities',actual:3280,pred:3500,color:'#f5a623'},
+  {cat:'Entertainment',actual:4200,pred:2800,color:'#b47aff'},
+  {cat:'Health',actual:1460,pred:1600,color:'#ff4d6a'},
+];
+const prow=document.getElementById('pred-cards-row');
+prow.innerHTML=predData.map(p=>`
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px">
+    <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">${p.cat}</div>
+    <div style="font-size:16px;font-family:var(--mono);font-weight:500;color:${p.color}">₹${p.pred.toLocaleString()}</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:4px">May forecast</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:2px">Actual Apr: ₹${p.actual.toLocaleString()}</div>
+    <div class="prog-bar" style="margin-top:8px"><div class="prog-fill" style="width:${Math.min(100,Math.round(p.pred/100))}%;background:${p.color}"></div></div>
+  </div>
+`).join('');
+
+const isDark=true;
+const gridColor='rgba(255,255,255,0.05)';
+const tickColor='#7a8299';
+const defaultOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e2333',borderColor:'#3a4060',borderWidth:1,titleColor:'#e8ecf4',bodyColor:'#7a8299',padding:10}},scales:{x:{grid:{color:gridColor},ticks:{color:tickColor,font:{size:10}}},y:{grid:{color:gridColor},ticks:{color:tickColor,font:{size:10,family:'DM Mono'},callback:v=>'₹'+Math.round(v/1000)+'k'}}}};
+
+new Chart(document.getElementById('barChart'),{
+  type:'bar',
+  data:{
+    labels:['Nov','Dec','Jan','Feb','Mar','Apr'],
+    datasets:[
+      {label:'Food',data:[5200,6800,5500,4900,6100,6800],backgroundColor:'#00d4aa55',borderColor:'#00d4aa',borderWidth:1,borderRadius:3},
+      {label:'Transport',data:[3200,3800,3500,3100,3700,4040],backgroundColor:'#4a9eff44',borderColor:'#4a9eff',borderWidth:1,borderRadius:3},
+      {label:'Utilities',data:[2800,3100,2900,2600,2800,3280],backgroundColor:'#f5a62340',borderColor:'#f5a623',borderWidth:1,borderRadius:3},
+      {label:'Entertainment',data:[1800,2200,2100,1500,2200,4200],backgroundColor:'#b47aff40',borderColor:'#b47aff',borderWidth:1,borderRadius:3},
+      {label:'Health',data:[1000,1100,960,900,1200,1460],backgroundColor:'#ff4d6a30',borderColor:'#ff4d6a',borderWidth:1,borderRadius:3},
+    ]
+  },
+  options:{...defaultOpts,scales:{x:{stacked:true,grid:{color:gridColor},ticks:{color:tickColor,font:{size:10}}},y:{stacked:true,grid:{color:gridColor},ticks:{color:tickColor,font:{size:10,family:'DM Mono'},callback:v=>'₹'+Math.round(v/1000)+'k'}}}}
+});
+
+new Chart(document.getElementById('donutChart'),{
+  type:'doughnut',
+  data:{
+    labels:['Food','Transport','Utilities','Entertainment','Health'],
+    datasets:[{data:[37,22,18,15,8],backgroundColor:['#00d4aa','#4a9eff','#f5a623','#b47aff','#ff4d6a'],borderColor:'#181c27',borderWidth:3,hoverOffset:6}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e2333',borderColor:'#3a4060',borderWidth:1,titleColor:'#e8ecf4',bodyColor:'#7a8299',callbacks:{label:ctx=>` ${ctx.label}: ${ctx.parsed}%`}}}}
+});
+
+new Chart(document.getElementById('predChart'),{
+  type:'line',
+  data:{
+    labels:['Nov','Dec','Jan','Feb','Mar','Apr','May (pred)'],
+    datasets:[
+      {label:'Actual',data:[14000,17000,14960,13000,16000,18240,null],borderColor:'#00d4aa',backgroundColor:'#00d4aa18',tension:.4,pointBackgroundColor:'#00d4aa',pointRadius:4,fill:true},
+      {label:'Predicted',data:[13200,16100,14500,13500,15400,17000,21400],borderColor:'#4a9eff',backgroundColor:'transparent',tension:.4,pointBackgroundColor:'#4a9eff',pointRadius:4,borderDash:[6,3]},
+    ]
+  },
+  options:{...defaultOpts}
+});
+</script>
