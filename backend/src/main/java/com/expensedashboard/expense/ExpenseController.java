@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/expenses")
+@RequestMapping("/api/expense")
 @AllArgsConstructor
 @NoArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class ExpenseController {
 
     @Autowired
@@ -30,6 +31,7 @@ public class ExpenseController {
 
     @PostMapping
     public ResponseEntity<Expense> createExpense(@Valid @RequestBody Expense expense) {
+        expense.setUserId(1L);
         return ResponseEntity.ok(expenseService.createExpense(expense));
     }
 

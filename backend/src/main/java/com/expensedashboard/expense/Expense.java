@@ -26,7 +26,7 @@ public class Expense {
     private Long id;
 
     @Column(name = "user_id", nullable = false)
-    @NotNull
+//    @NotNull
     private Long userId;
 
     @Column(name = "category", nullable = false, length = 50)

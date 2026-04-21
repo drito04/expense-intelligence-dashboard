@@ -1,0 +1,93 @@
+Phase 2 — Frontend Foundation
+Here's your step-by-step guide to get the React app talking to your Spring Boot backend.
+
+Step 1 — Scaffold the React App
+
+Open your terminal and navigate to your project's root folder (where your backend folder lives).
+Create a new Vite + React project there. Name it expense-dashboard-frontend.
+Once created, navigate into that folder and install the two additional libraries you'll need: Axios and Recharts.
+Run the dev server and confirm the default Vite page loads on port 3000.
+
+
+Step 2 — Set Up the Folder Structure
+Inside src/, create the following folders manually before writing any components. This keeps the project clean from the start:
+
+api/ — for all HTTP call functions
+components/ — for reusable UI pieces
+context/ — for your two Context providers
+pages/ — for your route-level page components
+
+This mirrors the structure from Section 9.2 of the reference doc.
+
+Step 3 — Configure the Environment Variable
+
+Create a .env file at the root of your frontend project.
+Add the VITE_API_BASE_URL variable pointing to http://localhost:8080/api.
+This is the only place your backend URL should live — all API files will read from this variable so you only change it once when deploying.
+
+
+Step 4 — Create the Axios API Layer
+
+Inside api/, create a file called expenseApi.js.
+This file should set up an Axios instance using your environment variable as the base URL.
+Write individual functions in this file for each expense endpoint from Section 5.2 — one function each for: get all expenses, get one expense, create expense, update expense, delete expense, get summary, and get anomalies.
+Keep all HTTP logic confined to this file. Your components should never call Axios directly — they go through these functions.
+
+
+Step 5 — Set Up React Router and Basic Layout
+
+Install react-router-dom if you haven't already.
+Open App.jsx and configure your routes. For now you only need three:
+
+/dashboard → Dashboard page
+/expenses → ExpenseList page
+/expenses/new → ExpenseForm page
+
+
+Add a simple nav bar with links to Dashboard and Expenses so you can jump between them during development.
+Set the default route to redirect to /dashboard.
+
+
+Step 6 — Build the ExpenseForm Page
+
+Create ExpenseForm.jsx inside pages/.
+It needs fields for: category (a dropdown with the 6 categories from the schema), amount (number input), description (optional text), and expense date (date picker).
+On submit, call the createExpense function from your API layer.
+After a successful save, log the response to the console for now — you'll wire up navigation later.
+Make sure the form resets after submission.
+
+
+Step 7 — Build the ExpenseList Page
+
+Create ExpenseList.jsx inside pages/.
+On component mount (useEffect), call the getAllExpenses function from your API layer and store the result in local state.
+Render the data in an HTML table with columns: Date, Category, Amount, Description.
+Add a loading state so the table shows a "Loading..." message while the fetch is in progress.
+Add a basic error state in case the backend is unreachable.
+
+
+Step 8 — Add the SpendingBarChart Component
+
+Create SpendingBarChart.jsx inside components/.
+This component calls GET /expenses/summary (via your API layer) to get monthly totals per category.
+Use Recharts' BarChart component to render the data. At this stage, don't worry about animations — just get real data showing up.
+Drop this component into your Dashboard page.
+
+
+Step 9 — Wire It All Together on the Dashboard
+
+Create Dashboard.jsx inside pages/.
+It should render two things for now: the SpendingBarChart component and a button or link to navigate to /expenses/new.
+Confirm the chart is pulling real data from Spring Boot.
+
+
+Step 10 — End-to-End Smoke Test
+Before calling Phase 2 done, verify this full user journey works:
+
+Make sure your Spring Boot server is running on port 8080.
+Open the React app on port 3000.
+Navigate to /expenses/new, fill out the form, and submit.
+Navigate to /expenses and confirm the new expense appears in the table.
+Navigate to /dashboard and confirm the bar chart reflects the data.
+
+If all three steps pass, Phase 2 is complete and you're ready to move on to the Flask ML service in Phase 3.
